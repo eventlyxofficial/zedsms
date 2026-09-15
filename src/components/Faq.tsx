@@ -81,7 +81,7 @@ export default function Faq() {
                   </button>
                 </h3>
                 <Collapse open={isOpen} id={id}>
-                  <p className="-mt-1 sm:-mt-2 pb-5 sm:pb-6 pr-9 lg:pr-[68px] font-sans text-base leading-6 text-[#494c52]">
+                  <p className="pt-1 pb-6 sm:pb-8 pl-0.5 pr-9 lg:pr-[68px] font-sans text-base leading-6 text-[#494c52]">
                     {f.a}
                   </p>
                 </Collapse>

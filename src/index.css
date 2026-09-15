@@ -99,6 +99,12 @@ html {
     max-height 350ms ease,
     opacity 350ms ease;
 }
+/* Once fully open (max-height released to "none" by Collapse.tsx), let content
+   overflow freely instead of staying clipped — guards against any answer text
+   being cut off if the measured scrollHeight was ever stale. */
+.collapsible[aria-hidden="false"] {
+  overflow: visible;
+}
 .collapsible[aria-hidden="true"],
 .collapsible[aria-hidden="true"] > * {
   transition:

@@ -5,7 +5,7 @@ import imgLogoText from "../assets/hero/b836f.svg";
 
 const navLinks = [
   { label: "Features", to: "/features" },
-  { label: "Pricing", to: null },
+  { label: "Pricing", to: "/pricing" },
   { label: "About", to: "/about" },
 ];
 
