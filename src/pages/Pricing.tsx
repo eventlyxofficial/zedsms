@@ -31,9 +31,12 @@ export default function PricingPage() {
             </p>
           </div>
         </section>
-
-        <PricingCalculator />
       </div>
+
+      {/* Rendered outside the hero's `overflow-hidden` wrapper (which exists only to mask
+          the absolutely-positioned background image) so the service dropdown's open panel
+          isn't clipped by that ancestor when it extends past the wrapper's bottom edge. */}
+      <PricingCalculator />
 
       <Faq />
       <Cta />
