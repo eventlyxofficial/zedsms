@@ -1,0 +1,109 @@
+import imgFlagUk from "../assets/pricing/ea42a.svg";
+import imgFlagUs from "../assets/pricing/91b4b.svg";
+// Figma has the Canada and Australia flags swapped; assigned correctly here.
+import imgFlagCa from "../assets/pricing/67657.svg";
+import imgFlagAu from "../assets/pricing/b2cdb.svg";
+import imgTag from "../assets/pricing/59681.svg";
+import imgGift from "../assets/pricing/0c16a.svg";
+import imgCall from "../assets/pricing/06172.svg";
+import imgRefresh from "../assets/pricing/4f77e.svg";
+import imgFlash from "../assets/pricing/8dd23.svg";
+
+const plans = [
+  { country: "United Kingdom", flag: imgFlagUk, price: "$2.50", annual: "Annual: $15.00 (save 50% vs monthly)", popular: true },
+  { country: "United States", flag: imgFlagUs, price: "$3.99", annual: "Annual: $23.88 (save 50% vs monthly)" },
+  { country: "Canada", flag: imgFlagCa, price: "$3.00", annual: "Annual: $20.94 (save 42% vs monthly)" },
+  { country: "Australia", flag: imgFlagAu, price: "$2.00", annual: "Annual: $19.50 (save 19% vs monthly)" },
+];
+
+const sharedDetails = [
+  { icon: imgGift, text: "Setup Fee: Free" },
+  { icon: imgCall, text: "Free incoming calls & SMS" },
+  { icon: imgRefresh, text: "Renew anytime" },
+  { icon: imgFlash, text: "Instant Activation" },
+];
+
+export default function Pricing() {
+  return (
+    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
+      <div className="mx-auto max-w-[1290px] flex flex-col items-center gap-10 lg:gap-[60px]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div
+            className="inline-flex items-center justify-center gap-1.5 px-[13px] py-[9px] rounded-full border border-transparent"
+            style={{
+              background:
+                "linear-gradient(#fff, #fff) padding-box, linear-gradient(92deg, #2155F5 1.96%, #7A9BFF 46.96%, #2155F5 92.83%) border-box",
+            }}
+          >
+            <span className="font-sans font-semibold text-sm leading-4 text-[#2155f5] whitespace-nowrap">
+              Pricing Plan
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center gap-5">
+            <h2 className="font-display font-semibold text-[30px] leading-[36px] sm:text-[36px] sm:leading-[40px] xl:text-[40px] xl:leading-[44px] tracking-[-0.015em] text-[#0f1013]">
+              Simple, transparent pricing
+            </h2>
+            <p className="font-sans text-base leading-6 text-[#494c52]">
+              Pay from your wallet balance. No subscriptions, no contracts.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex w-full flex-col items-center gap-10 lg:gap-12">
+          <ul className="grid w-full max-w-[308px] md:max-w-[635px] xl:max-w-none grid-cols-1 md:grid-cols-2 xl:grid-cols-4 items-end gap-5 xl:gap-[19px]">
+            {plans.map((p) => (
+              <li
+                key={p.country}
+                className={`lift relative rounded-[20px] p-1.5 ${
+                  p.popular
+                    ? "bg-gradient-to-b from-[#2155f5] to-[#96afff] pt-[34px]"
+                    : "bg-[#f2f2f2]"
+                }`}
+              >
+                {p.popular && (
+                  <span className="absolute left-1/2 top-[18px] -translate-x-1/2 -translate-y-1/2 font-sans font-medium text-base leading-6 text-white whitespace-nowrap">
+                    POPULAR
+                  </span>
+                )}
+                <div className="flex flex-col gap-7 bg-white rounded-2xl px-3.5 pt-3.5 pb-4 shadow-[0px_24px_32px_0px_rgba(193,193,214,0.16)]">
+                  <div className="flex items-center gap-[9px]">
+                    <img src={p.flag} alt="" className="size-11 shrink-0" />
+                    <h3 className="font-display font-medium text-xl leading-7 text-[#0f1013]">
+                      {p.country}
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-col gap-7">
+                    <p className="text-[#0f1013]">
+                      <span className="font-display font-semibold text-[40px] leading-[44px] tracking-[-0.03em]">
+                        {p.price}
+                      </span>
+                      <span className="font-sans text-base leading-6 text-[#494c52]">/mo</span>
+                    </p>
+
+                    <ul className="flex flex-col gap-3.5">
+                      {[{ icon: imgTag, text: p.annual }, ...sharedDetails].map((d) => (
+                        <li key={d.text} className="flex items-center gap-2">
+                          <img src={d.icon} alt="" className="size-4 shrink-0" />
+                          <span className="font-sans text-sm leading-5 text-[#494c52]">{d.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <p className="font-sans text-base leading-6 text-[#494c52] text-center">
+            US private numbers include 50 free inbound SMS, then $0.03 each.{" "}
+            <a href="#" className="text-[#2155f5] hover:underline whitespace-nowrap">
+              See the full pricing checker →
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}

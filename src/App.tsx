@@ -1,0 +1,27 @@
+import { useLayoutEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import Home from "./pages/Home";
+import Features from "./pages/Features";
+import About from "./pages/About";
+
+// Start each page at the top instead of keeping the previous scroll position
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
+  return null;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

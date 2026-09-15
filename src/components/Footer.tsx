@@ -1,0 +1,105 @@
+import imgLogoMark from "../assets/footer/b8b96.svg";
+import imgLogoText from "../assets/footer/f8fd8.svg";
+import imgInstagram from "../assets/footer/e6509.svg";
+import imgX from "../assets/footer/4db67.svg";
+import imgYoutube from "../assets/footer/81a88.svg";
+import imgTiktok from "../assets/footer/66ea5.svg";
+import imgAppStore from "../assets/footer/6219b.svg";
+import imgGooglePlay from "../assets/footer/f38c8.svg";
+
+const socials = [
+  { icon: imgInstagram, label: "Instagram" },
+  { icon: imgX, label: "X" },
+  { icon: imgYoutube, label: "YouTube" },
+  { icon: imgTiktok, label: "TikTok" },
+];
+
+const linkGroups = [
+  { title: "COMPANY", links: ["Home", "About", "Blog", "Careers"] },
+  { title: "LEGAL", links: ["Terms & Conditions", "Privacy Policy"] },
+  { title: "SUPPORT", links: ["support@zedsms.com", "FAQ", "Contact"] },
+];
+
+export default function Footer() {
+  return (
+    <footer className="relative w-full bg-[#f9f9fa]">
+      <div className="px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 pb-14 lg:pt-[60px] lg:pb-20">
+        <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12">
+          <div className="flex flex-col gap-8 lg:gap-10 w-full max-w-[320px] lg:shrink-0">
+            <div className="flex flex-col gap-6">
+              <a href="#" className="flex items-center gap-3" aria-label="ZEDSMS home">
+                <img src={imgLogoMark} alt="" className="size-[42px]" />
+                <img src={imgLogoText} alt="" className="h-[23.6px] w-[128.2px]" />
+              </a>
+              <p className="font-sans text-base leading-6 text-[#494c52]">
+                Get instant private and shared phone numbers across the US, UK, Canada, and Australia for seamless SMS receiving.
+              </p>
+            </div>
+
+            <ul className="flex items-center gap-2">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href="#"
+                    aria-label={s.label}
+                    className="lift group flex items-center justify-center size-[52px] sm:size-[60px] rounded-full bg-white hover:bg-[#2155f5] focus-visible:bg-[#2155f5]"
+                  >
+                    {/* Exported icon used as a mask so its colour can switch to white on hover */}
+                    <span
+                      aria-hidden
+                      className="h-6 w-[23px] bg-[#494c52] group-hover:bg-white group-focus-visible:bg-white transition-colors"
+                      style={{
+                        maskImage: `url("${s.icon}")`,
+                        WebkitMaskImage: `url("${s.icon}")`,
+                        maskSize: "100% 100%",
+                        WebkitMaskSize: "100% 100%",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskRepeat: "no-repeat",
+                      }}
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <nav className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10 sm:gap-12 lg:flex lg:gap-12">
+            {linkGroups.map((g) => (
+              <div key={g.title} className="flex flex-col gap-4 sm:gap-6 lg:w-[180px]">
+                <h2 className="font-display font-medium text-lg leading-[26px] text-[#0f1013]">{g.title}</h2>
+                <ul className="flex flex-col">
+                  {g.links.map((l) => (
+                    <li key={l}>
+                      <a
+                        href={l.includes("@") ? `mailto:${l}` : "#"}
+                        className="font-sans text-base leading-6 text-[#494c52] hover:text-[#2155f5] transition-colors break-all sm:break-normal"
+                      >
+                        {l}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      <div className="bg-white border-t border-[#e6e6e6] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-6 sm:py-7">
+        <div className="mx-auto max-w-[1290px] flex flex-col-reverse sm:flex-row items-center sm:justify-between gap-5">
+          <p className="font-sans text-sm leading-5 sm:text-base sm:leading-6 text-[#494c52] text-center sm:text-left">
+            © 2026 ZEDSMS. All rights reserved.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <a href="#">
+              <img src={imgAppStore} alt="Download on the App Store" className="h-12 w-[163px]" />
+            </a>
+            <a href="#">
+              <img src={imgGooglePlay} alt="Get it on Google Play" className="h-12 w-[163px]" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
