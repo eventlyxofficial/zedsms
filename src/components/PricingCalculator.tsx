@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CountrySelect, { type Country } from "./CountrySelect";
 import { allCountries, findCountry } from "../data/countries";
 import { getCallingRates } from "../data/callingRates";
@@ -16,7 +16,6 @@ import imgLandline from "../assets/pricing/calc/c0cfb.svg";
 import imgMessageIn from "../assets/pricing/calc/b136c.svg";
 import imgMessageOut from "../assets/pricing/calc/d8fec.svg";
 import imgInfo from "../assets/pricing/calc/5b09f.svg";
-import imgInfo1 from "../assets/pricing/calc/a7ce9.svg";
 import imgArrowRight from "../assets/pricing/calc/d004c.svg";
 import imgShare from "../assets/pricing/calc/5da8b.svg";
 
@@ -64,20 +63,80 @@ function getPrivatePeriods(country: PrivateCountry): Period[] {
   ];
 }
 
+const INBOUND_ALLOWANCE_TOOLTIP =
+  "Includes a monthly free allowance. Any messages beyond the included amount are charged at the listed rate. The allowance resets each month.";
+const INBOUND_FREE_TOOLTIP = "Inbound SMS is free.";
+
+type CallRateRow = {
+  key: string;
+  icon: string;
+  label: string;
+  price: string;
+  tooltip?: string;
+};
+
 // Only the numeric rate ever changes here — these label/unit templates are fixed.
-function getCallRateRows(countryCode: string) {
+function getCallRateRows(countryCode: string): CallRateRow[] {
   const rates = getCallingRates(countryCode);
+  const inbound = rates.inboundSms;
+  const inboundFree = inbound.type === "free";
+  const inboundPrice = inbound.type === "free" ? "FREE" : `50 Free/mo, then ${inbound.rate} ¢/Msg`;
+
   return [
-    { icon: imgSmartPhone, label: "Mobile", price: `${rates.mobile}¢/Min` },
-    { icon: imgLandline, label: "Landline", price: `${rates.landline}¢/Min` },
-    { icon: imgMessageIn, label: "Inbound SMS", price: `${rates.inboundSms} ¢/Msg`, info: imgInfo },
+    { key: "mobile", icon: imgSmartPhone, label: "Mobile", price: `${rates.mobile}¢/Min` },
+    { key: "landline", icon: imgLandline, label: "Landline", price: `${rates.landline}¢/Min` },
     {
-      icon: imgMessageOut,
-      label: "Outbound SMS",
-      price: `50 Free/mo, then ${rates.outboundSms} ¢/Msg`,
-      info: imgInfo1,
+      key: "inbound",
+      icon: imgMessageIn,
+      label: "Inbound SMS",
+      price: inboundPrice,
+      tooltip: inboundFree ? INBOUND_FREE_TOOLTIP : INBOUND_ALLOWANCE_TOOLTIP,
     },
+    { key: "outbound", icon: imgMessageOut, label: "Outbound SMS", price: `${rates.outboundSms} ¢/Msg` },
   ];
+}
+
+function InfoTooltip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
+  return (
+    <span ref={rootRef} className="relative isolate inline-flex shrink-0">
+      <button
+        type="button"
+        aria-label="More information"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center justify-center"
+      >
+        <img src={imgInfo} alt="" className="size-4" />
+      </button>
+      <span
+        role="tooltip"
+        className={`pointer-events-none absolute bottom-full left-1/2 z-[99999] mb-2 w-max max-w-[240px] -translate-x-1/2 rounded-lg bg-[#0f1013] px-3 py-2 text-left font-sans text-xs leading-4 text-white shadow-[0px_12px_24px_0px_rgba(15,16,19,0.32)] transition-[visibility,opacity] duration-150 ${
+          open ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+      >
+        {text}
+        <span
+          aria-hidden
+          className="absolute left-1/2 top-full -mt-1 size-2.5 -translate-x-1/2 rotate-45 bg-[#0f1013]"
+        />
+      </span>
+    </span>
+  );
 }
 
 // Shared-number country options (exactly 4, per the design). Default: United States.
@@ -274,14 +333,14 @@ export default function PricingCalculator() {
 
                     <ul className="flex flex-col gap-3 items-start w-full">
                       {callRates.map((r, i) => (
-                        <li key={r.label} className="w-full">
+                        <li key={r.key} className="w-full">
                           <div className="flex items-center justify-between w-full">
                             <div className="flex gap-3 items-center">
                               <img src={r.icon} alt="" className="size-6" />
                               <span className="font-sans font-medium text-base leading-6 text-[#494c52]">
                                 {r.label}
                               </span>
-                              {r.info && <img src={r.info} alt="" className="size-4" />}
+                              {r.tooltip && <InfoTooltip text={r.tooltip} />}
                             </div>
                             <span className="font-sans text-lg leading-7 text-[#0f1013]">{r.price}</span>
                           </div>

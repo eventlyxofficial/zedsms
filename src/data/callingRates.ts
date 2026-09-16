@@ -1,19 +1,25 @@
+// Inbound SMS pricing is either a flat metered per-message rate (after a free
+// monthly allowance) or fully free for the country — kept as a discriminated
+// union so the UI can never accidentally render a stale/mismatched string.
+export type InboundSmsRate = { type: "free" } | { type: "metered"; rate: number };
+
 export type CallingRates = {
   mobile: number;
   landline: number;
-  inboundSms: number;
+  inboundSms: InboundSmsRate;
   outboundSms: number;
 };
 
-// Keyed by ISO cca2 code. Numeric-only — the UI is responsible for the fixed
-// labels/units (¢/Min, ¢/Msg, "Free/mo, then ..."). Add a country here to give it
-// real rates; any country without an entry gets a deterministic fallback below.
+// Keyed by ISO cca2 code. Numeric-only — the UI owns the fixed labels/units
+// (¢/Min, ¢/Msg, "Free/mo, then ..."). Add a country here to give it real rates;
+// any country without an entry gets a deterministic fallback below.
 const ratesByCountry: Record<string, CallingRates> = {
-  BD: { mobile: 2.4, landline: 2.4, inboundSms: 2.4, outboundSms: 1.5 },
-  US: { mobile: 3.1, landline: 2.8, inboundSms: 2.2, outboundSms: 1.4 },
-  GB: { mobile: 3.2, landline: 2.8, inboundSms: 2.1, outboundSms: 1.3 },
-  CA: { mobile: 2.7, landline: 2.5, inboundSms: 2.3, outboundSms: 1.4 },
-  AU: { mobile: 3.0, landline: 2.6, inboundSms: 2.2, outboundSms: 1.6 },
+  BD: { mobile: 2.4, landline: 2.4, inboundSms: { type: "metered", rate: 1.5 }, outboundSms: 2.4 },
+  US: { mobile: 3.1, landline: 2.8, inboundSms: { type: "metered", rate: 1.4 }, outboundSms: 2.2 },
+  // United Kingdom: inbound SMS is free — no allowance/overage pricing applies.
+  GB: { mobile: 3.2, landline: 2.8, inboundSms: { type: "free" }, outboundSms: 1.3 },
+  CA: { mobile: 2.7, landline: 2.5, inboundSms: { type: "metered", rate: 1.4 }, outboundSms: 2.3 },
+  AU: { mobile: 3.0, landline: 2.6, inboundSms: { type: "metered", rate: 1.6 }, outboundSms: 2.2 },
 };
 
 // Deterministic hash so a country without manual rates always gets the same
@@ -38,7 +44,7 @@ function generateFallbackRates(countryCode: string): CallingRates {
   return {
     mobile: pseudoRate(seed, 1),
     landline: pseudoRate(seed, 2),
-    inboundSms: pseudoRate(seed, 3),
+    inboundSms: { type: "metered", rate: pseudoRate(seed, 3, 0.5, 2.5) },
     outboundSms: pseudoRate(seed, 4, 0.5, 2.5),
   };
 }
