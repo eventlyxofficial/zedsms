@@ -80,8 +80,16 @@ export default function Hero() {
 
           <div style={{ "--i": 3 } as CSSProperties} className="hero-in flex flex-col gap-5 items-center lg:items-start">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <img src={imgAppStore} alt="Download on the App Store" className="h-12 w-[163px]" />
-              <img src={imgGooglePlay} alt="Get it on Google Play" className="h-12 w-[163px]" />
+              <a href="#">
+                <img src={imgAppStore} alt="Download on the App Store" className="h-12 w-[163px]" />
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.app.zedsms"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={imgGooglePlay} alt="Get it on Google Play" className="h-12 w-[163px]" />
+              </a>
             </div>
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
               <span className="font-sans text-sm text-[#494c52]">

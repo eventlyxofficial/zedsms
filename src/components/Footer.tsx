@@ -67,7 +67,7 @@ export default function Footer() {
             {linkGroups.map((g) => (
               <div key={g.title} className="flex flex-col gap-4 sm:gap-6 lg:w-[180px]">
                 <h2 className="font-display font-medium text-lg leading-[26px] text-[#0f1013]">{g.title}</h2>
-                <ul className="flex flex-col">
+                <ul className="flex flex-col gap-2.5">
                   {g.links.map((l) => (
                     <li key={l}>
                       <a
@@ -94,7 +94,7 @@ export default function Footer() {
             <a href="#">
               <img src={imgAppStore} alt="Download on the App Store" className="h-12 w-[163px]" />
             </a>
-            <a href="#">
+            <a href="https://play.google.com/store/apps/details?id=com.app.zedsms" target="_blank" rel="noopener noreferrer">
               <img src={imgGooglePlay} alt="Get it on Google Play" className="h-12 w-[163px]" />
             </a>
           </div>

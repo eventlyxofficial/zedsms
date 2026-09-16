@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import imgFlagUk from "../assets/pricing/ea42a.svg";
 import imgFlagUs from "../assets/pricing/91b4b.svg";
 // Figma has the Canada and Australia flags swapped; assigned correctly here.
@@ -98,9 +99,9 @@ export default function Pricing() {
 
           <p className="font-sans text-base leading-6 text-[#494c52] text-center">
             US private numbers include 50 free inbound SMS, then $0.03 each.{" "}
-            <a href="#" className="text-[#2155f5] hover:underline whitespace-nowrap">
+            <Link to="/pricing" className="text-[#2155f5] hover:underline whitespace-nowrap">
               See the full pricing checker →
-            </a>
+            </Link>
           </p>
         </div>
       </div>
