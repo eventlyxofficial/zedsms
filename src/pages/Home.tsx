@@ -20,11 +20,11 @@ export default function Home() {
       <HowItWorks />
       <NumberTypes />
       <UseCases />
-      <Faq />
       <Coverage />
       <CoreFeatures />
       <Pricing />
       <Stats />
+      <Faq />
       <Cta />
       <Footer />
     </>
