@@ -52,7 +52,7 @@ export default function Pricing() {
         </div>
 
         <div className="flex w-full flex-col items-center gap-10 lg:gap-12">
-          <ul className="grid w-full max-w-[308px] md:max-w-[635px] xl:max-w-none grid-cols-1 md:grid-cols-2 xl:grid-cols-4 items-end gap-5 xl:gap-[19px]">
+          <ul className="grid w-full max-w-none md:max-w-[635px] xl:max-w-none grid-cols-1 md:grid-cols-2 xl:grid-cols-4 items-end gap-5 xl:gap-[19px]">
             {plans.map((p) => (
               <li
                 key={p.country}

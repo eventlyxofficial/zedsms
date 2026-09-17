@@ -22,7 +22,7 @@ const linkGroups = [
 
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-[#f9f9fa]">
+    <footer className="relative w-full bg-white">
       <div className="px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 pb-14 lg:pt-[60px] lg:pb-20">
         <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12">
           <div className="flex flex-col gap-8 lg:gap-10 w-full max-w-[320px] lg:shrink-0">
@@ -42,7 +42,7 @@ export default function Footer() {
                   <a
                     href="#"
                     aria-label={s.label}
-                    className="lift group flex items-center justify-center size-[52px] sm:size-[60px] rounded-full bg-white hover:bg-[#2155f5] focus-visible:bg-[#2155f5]"
+                    className="lift group flex items-center justify-center size-[52px] sm:size-[60px] rounded-full bg-[#f3f4f6] hover:bg-[#2155f5] focus-visible:bg-[#2155f5]"
                   >
                     {/* Exported icon used as a mask so its colour can switch to white on hover */}
                     <span

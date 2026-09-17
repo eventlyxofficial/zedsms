@@ -218,6 +218,63 @@ function PeriodTabs({
   );
 }
 
+// Mobile-only accordion for the private-number billing period. Desktop keeps
+// the horizontal PeriodTabs segmented control untouched.
+function PrivateBillingAccordion({
+  periods,
+  active,
+  onChange,
+}: {
+  periods: Period[];
+  active: string;
+  onChange: (key: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      {periods.map((p) => {
+        const isActive = p.key === active;
+        return (
+          <div
+            key={p.key}
+            className={`rounded-2xl border transition-colors ${
+              isActive ? "border-[#2155f5] bg-[#f5f8ff]" : "border-[#e6e6e6] bg-white"
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => onChange(p.key)}
+              aria-expanded={isActive}
+              className="flex flex-col gap-1.5 w-full px-4 py-3.5"
+            >
+              <span className="flex items-center gap-2 w-full">
+                <span className="font-sans font-medium text-base leading-6 text-[#0f1013]">{p.label}</span>
+                {p.save && (
+                  <span className="font-sans font-semibold text-xs leading-3 text-[#2155f5] bg-[#eef1fb] px-2 py-1 rounded-full">
+                    {p.save}
+                  </span>
+                )}
+              </span>
+              <span className="flex items-center gap-2">
+                {p.was && (
+                  <span className="font-display font-medium text-sm leading-5 text-[#494c52] line-through decoration-from-font">
+                    ${p.was.toFixed(2)}
+                  </span>
+                )}
+                <span className="text-[#0f1013]">
+                  <span className="font-sans font-semibold text-xl leading-6 tracking-[-0.02em]">
+                    ${p.price.toFixed(2)}
+                  </span>
+                  <span className="font-sans text-sm leading-5 text-[#494c52]">/mo</span>
+                </span>
+              </span>
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function PricingCalculator() {
   const [privateCountry, setPrivateCountry] = useState<PrivateCountry>(privateCountries[0]);
   const [privatePeriod, setPrivatePeriod] = useState("monthly");
@@ -272,10 +329,15 @@ export default function PricingCalculator() {
 
                   <div className="flex flex-col gap-4 items-start w-full">
                     <CountrySelect countries={privateCountries} value={privateCountry} onChange={setPrivateCountry} />
-                    <PeriodTabs options={privatePeriods} active={privatePeriod} onChange={setPrivatePeriod} />
+                    <div className="hidden md:block w-full">
+                      <PeriodTabs options={privatePeriods} active={privatePeriod} onChange={setPrivatePeriod} />
+                    </div>
+                    <div className="md:hidden w-full">
+                      <PrivateBillingAccordion periods={privatePeriods} active={privatePeriod} onChange={setPrivatePeriod} />
+                    </div>
                   </div>
 
-                  <div className="flex gap-4 items-center justify-center w-full">
+                  <div className="hidden md:flex gap-4 items-center justify-center w-full">
                     {activePrivate.was && (
                       <span className="font-display font-medium text-xl leading-7 text-[#494c52] line-through decoration-from-font">
                         ${activePrivate.was.toFixed(2)}
@@ -331,7 +393,8 @@ export default function PricingCalculator() {
                       )}
                     />
 
-                    <ul className="flex flex-col gap-3 items-start w-full">
+                    {/* Desktop: unchanged flex layout */}
+                    <ul className="hidden md:flex flex-col gap-3 items-start w-full">
                       {callRates.map((r, i) => (
                         <li key={r.key} className="w-full">
                           <div className="flex items-center justify-between w-full">
@@ -345,6 +408,29 @@ export default function PricingCalculator() {
                             <span className="font-sans text-lg leading-7 text-[#0f1013]">{r.price}</span>
                           </div>
                           {i < callRates.length - 1 && <div className="border-t border-[#e6e6e6] mt-3" />}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Mobile: flex row with a controlled-width, right-aligned pricing block */}
+                    <ul className="md:hidden flex flex-col gap-2.5 items-start w-full">
+                      {callRates.map((r, i) => (
+                        <li key={r.key} className="w-full">
+                          <div className="flex items-center gap-3 w-full">
+                            <div className="flex items-center gap-2 shrink-0 whitespace-nowrap py-1">
+                              <img src={r.icon} alt="" className="size-6 shrink-0" />
+                              <span className="flex items-center gap-1.5">
+                                <span className="font-sans font-medium text-[16px] leading-6 text-[#494c52]">
+                                  {r.label}
+                                </span>
+                                {r.tooltip && <InfoTooltip text={r.tooltip} />}
+                              </span>
+                            </div>
+                            <span className="font-sans text-[17px] leading-[22px] text-[#0f1013] text-right ml-auto [flex:0_0_45%] max-w-[45%] [white-space:normal] [overflow-wrap:normal] [word-break:normal]">
+                              {r.price}
+                            </span>
+                          </div>
+                          {i < callRates.length - 1 && <div className="border-t border-[#e6e6e6] mt-2.5" />}
                         </li>
                       ))}
                     </ul>

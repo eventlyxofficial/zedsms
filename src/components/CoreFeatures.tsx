@@ -67,7 +67,7 @@ export default function CoreFeatures() {
 
         <ul className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(3,minmax(0,352px))] justify-between gap-x-10 gap-y-10 lg:gap-y-[60px]">
           {features.map((f) => (
-            <li key={f.title} className="flex flex-col gap-5 lg:gap-6">
+            <li key={f.title} className="flex flex-col items-center text-center gap-5 sm:items-start sm:text-left lg:gap-6">
               <div className="relative flex items-center justify-center size-14 shrink-0 rounded-full bg-gradient-to-b from-[#2155f5] to-[#698dfb]">
                 <img src={f.icon} alt="" className="size-6" />
                 <span
@@ -75,11 +75,11 @@ export default function CoreFeatures() {
                   className="absolute inset-0 rounded-full shadow-[inset_0_-3px_12px_rgba(255,255,255,0.24)]"
                 />
               </div>
-              <div className="flex flex-col gap-3 lg:gap-4">
+              <div className="flex flex-col items-center text-center gap-3 sm:items-start sm:text-left lg:gap-4">
                 <h3 className="font-display font-medium text-xl leading-7 sm:text-2xl text-[#0f1013]">
                   {f.title}
                 </h3>
-                <p className="font-sans text-base leading-6 text-[#494c52]">{f.body}</p>
+                <p className="font-sans text-base leading-6 text-[#494c52] max-w-[320px] sm:max-w-none">{f.body}</p>
               </div>
             </li>
           ))}
