@@ -46,7 +46,7 @@ export default function About() {
 
         <Navbar />
 
-        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[148px] pb-12 lg:pb-[60px] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[148px] pb-12 lg:pb-[60px] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
           <div className="mx-auto max-w-[1290px] flex flex-col gap-10 lg:gap-9">
             <div className="flex flex-col gap-6 max-w-[1050px] text-center lg:text-left items-center lg:items-start">
               <h1 className="hero-in font-display font-semibold text-[40px] leading-[44px] sm:text-[56px] sm:leading-[60px] xl:text-[68px] xl:leading-[70px] tracking-[-0.015em] text-[#0f1013]">
@@ -74,7 +74,7 @@ export default function About() {
 
       <Stats />
 
-      <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[50px]">
+      <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[50px]">
         <div className="mx-auto max-w-[1290px] flex flex-col gap-10 lg:gap-[60px]">
           <h2 className="text-center font-display font-semibold text-[36px] leading-[40px] sm:text-[44px] sm:leading-[48px] lg:text-[52px] lg:leading-[56px] tracking-[-0.02em] text-[#0f1013]">
             What we care about

@@ -11,7 +11,7 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
+    <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
       <dl className="mx-auto max-w-[1290px] grid grid-cols-2 gap-x-6 gap-y-10 lg:flex lg:items-center lg:justify-between">
         {stats.map((s, i) => (
           <Fragment key={s.label}>

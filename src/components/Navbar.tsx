@@ -21,7 +21,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="absolute inset-x-0 top-3 sm:top-5 z-20 px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+    <div className="absolute inset-x-0 top-3 sm:top-5 z-20 px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
       <nav className="mx-auto max-w-[1290px] bg-white rounded-[28px]">
         <div className="flex items-center justify-between pl-5 sm:pl-7 pr-2 sm:pr-3 py-2 sm:py-3">
           <div className="flex items-center gap-12">

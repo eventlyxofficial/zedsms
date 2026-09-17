@@ -23,7 +23,7 @@ const linkGroups = [
 export default function Footer() {
   return (
     <footer className="relative w-full bg-[#f9f9fa]">
-      <div className="px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 pb-14 lg:pt-[60px] lg:pb-20">
+      <div className="px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 pb-14 lg:pt-[60px] lg:pb-20">
         <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12">
           <div className="flex flex-col gap-8 lg:gap-10 w-full max-w-[320px] lg:shrink-0">
             <div className="flex flex-col gap-6">
@@ -85,7 +85,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="bg-white border-t border-[#e6e6e6] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-6 sm:py-7">
+      <div className="bg-white border-t border-[#e6e6e6] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-6 sm:py-7">
         <div className="mx-auto max-w-[1290px] flex flex-col-reverse sm:flex-row items-center sm:justify-between gap-5">
           <p className="font-sans text-sm leading-5 sm:text-base sm:leading-6 text-[#494c52] text-center sm:text-left">
             © 2026 ZEDSMS. All rights reserved.

@@ -2,7 +2,7 @@ import imgGlobe from "../assets/coverage/a7c33.webp";
 
 export default function Coverage() {
   return (
-    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
+    <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
       <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 lg:min-h-[634px] bg-white border border-[#e6e6e6] rounded-[20px] sm:rounded-[28px] overflow-hidden px-5 pt-8 pb-5 sm:px-10 sm:pt-12 sm:pb-8 lg:py-12 lg:pl-[60px] lg:pr-10 xl:pr-[60px]">
         <div className="flex flex-col gap-4 items-center text-center lg:items-start lg:text-left w-full max-w-[470px] lg:shrink-0 lg:w-[400px] xl:w-[470px]">
           <div

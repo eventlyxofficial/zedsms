@@ -7,7 +7,7 @@ import imgTelegram from "../assets/cta/3b833.svg";
 
 export default function Cta() {
   return (
-    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
+    <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-12 lg:py-[60px]">
       <div className="relative mx-auto max-w-[1290px] min-h-[380px] sm:min-h-[410px] flex items-center justify-center overflow-hidden rounded-[20px] sm:rounded-3xl px-5 sm:px-10 py-14">
         <img
           src={imgBg}

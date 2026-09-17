@@ -50,7 +50,7 @@ export default function Hero() {
 
       <Navbar />
 
-      <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[148px] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+      <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[148px] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
         <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row items-center lg:justify-between gap-12 lg:gap-10 xl:gap-16">
         <div className="flex flex-col gap-8 lg:gap-10 w-full max-w-[584px] lg:flex-1 min-[1440px]:w-[584px] min-[1440px]:flex-none shrink-0 items-center text-center lg:items-start lg:text-left">
           <div className="flex flex-col gap-3 items-center lg:items-start">
@@ -113,7 +113,7 @@ export default function Hero() {
         </div>
       </section>
 
-      <div className="relative mt-10 lg:mt-[52px] mb-10 lg:mb-0 px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+      <div className="relative mt-10 lg:mt-[52px] mb-10 lg:mb-0 px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
       <div data-hero-features className="mx-auto max-w-[1290px] bg-white rounded-3xl shadow-[0px_24px_64px_0px_rgba(193,193,214,0.16)] grid grid-cols-1 sm:grid-cols-2 lg:flex items-start lg:items-center justify-center gap-x-10 gap-y-8 lg:gap-[52px] px-6 sm:px-10 py-8 lg:py-7">
         {features.map((f) => (
           <div key={f.title} className="flex-1 flex flex-col items-center gap-4 lg:gap-6 text-center">

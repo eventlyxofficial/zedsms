@@ -83,7 +83,7 @@ export default function Features() {
 
         <Navbar />
 
-        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[150px] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[150px] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
           <div className="mx-auto max-w-[1290px] flex flex-col lg:flex-row items-center lg:justify-between gap-10 lg:gap-12 xl:gap-[127px]">
             <h1 className="hero-in w-full max-w-[593px] lg:flex-1 text-center lg:text-left font-display font-semibold text-[36px] leading-[40px] sm:text-[44px] sm:leading-[48px] xl:text-[52px] xl:leading-[56px] tracking-[-0.02em] text-[#0f1013]">
               <span className="text-[#2155f5]">A private ZEDSMS</span> number is flexible to your lifestyle and gives
@@ -112,7 +112,7 @@ export default function Features() {
         </section>
       </div>
 
-      <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 lg:pt-[66px] pb-12 lg:pb-[60px]">
+      <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pt-12 lg:pt-[66px] pb-12 lg:pb-[60px]">
         <div className="mx-auto max-w-[1290px] flex flex-col items-center gap-10 lg:gap-12">
           <ul className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-[30px]">
             {features.map((f) => (

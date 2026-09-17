@@ -21,7 +21,7 @@ export default function PricingPage() {
 
         <Navbar />
 
-        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[150px] pb-10 lg:pb-10 px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
+        <section className="relative pt-[112px] sm:pt-[136px] lg:pt-[150px] pb-10 lg:pb-10 px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px]">
           <div className="mx-auto max-w-[1290px] flex flex-col items-center gap-5 text-center">
             <h1 className="hero-in font-display font-semibold text-[40px] leading-[44px] sm:text-[56px] sm:leading-[60px] xl:text-[68px] xl:leading-[70px] tracking-[-0.015em] text-[#0f1013]">
               Simple, transparent pricing

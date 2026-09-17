@@ -38,7 +38,7 @@ const offers = [
 
 export default function NumberTypes() {
   return (
-    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-6 lg:py-[50px]">
+    <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] py-6 lg:py-[50px]">
       <div className="mx-auto max-w-[1290px] flex flex-col gap-6 sm:gap-10 lg:gap-[100px]">
         {offers.map((o) => (
           <div

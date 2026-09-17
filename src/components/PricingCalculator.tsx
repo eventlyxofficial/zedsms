@@ -234,7 +234,7 @@ export default function PricingCalculator() {
   const activeSharedPrice = getSharedNumberPrice(sharedCountry.code, sharedService.code, sharedPeriod as SharedDuration);
 
   return (
-    <section className="relative w-full bg-[#f9f9fa] px-4 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pb-12 lg:pb-[60px]">
+    <section className="relative w-full bg-[#f9f9fa] px-6 sm:px-8 lg:px-10 xl:px-12 min-[1440px]:px-[75px] pb-12 lg:pb-[60px]">
       <div className="mx-auto max-w-[1290px] flex flex-col items-center gap-10 lg:gap-10">
         <ul className="flex flex-wrap items-center justify-center gap-3">
           {badges.map((b) => (
