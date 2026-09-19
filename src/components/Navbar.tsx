@@ -38,7 +38,7 @@ export default function Navbar() {
             </ul>
           </div>
           <div className="flex items-center gap-2">
-            <a href="#" className="lift hidden sm:inline-flex border border-[#e1e2e9] rounded-full px-[22px] py-3 font-display font-medium text-sm text-[#090a0b]">
+            <a href="/auth/signin" className="lift hidden sm:inline-flex border border-[#e1e2e9] rounded-full px-[22px] py-3 font-display font-medium text-sm text-[#090a0b]">
               Sign in
             </a>
             <a href="/auth/signup" className="lift bg-[#2155f5] hover:bg-[#1a46d1] rounded-full px-4 sm:px-[22px] py-2.5 sm:py-3 font-display font-medium text-sm text-white whitespace-nowrap">
@@ -65,7 +65,7 @@ export default function Navbar() {
               </li>
             ))}
             <li className="sm:hidden pt-2">
-              <a href="#" className="block w-full text-center border border-[#e1e2e9] rounded-full px-[22px] py-3 font-display font-medium text-sm text-[#090a0b]">
+              <a href="/auth/signin" className="block w-full text-center border border-[#e1e2e9] rounded-full px-[22px] py-3 font-display font-medium text-sm text-[#090a0b]">
                 Sign in
               </a>
             </li>
