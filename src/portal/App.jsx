@@ -1,4 +1,5 @@
 import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Sidebar } from "./components/Sidebar";
 import { Topbar } from "./components/Topbar";
 import { TweaksPanel, TweakSection, TweakColor, TweakRadio } from "./components/TweaksPanel";
@@ -11,10 +12,17 @@ import { logout as apiLogout } from "./api/auth";
 
 // ============ RESPONSIVE + APP STYLES ============
 const appCss = `
+html { scrollbar-gutter: stable; }
 .mobile-only-flex { display: none !important; }
-.layout { display: flex; align-items: flex-start; max-width: 1440px; margin: 0 auto; }
-.content-wrap { flex: 1; min-width: 0; }
-.content-inner { max-width: 1180px; margin: 0 auto; padding: var(--content-pad); }
+.layout { display: flex; align-items: flex-start; max-width: 1440px; margin: 0 auto; min-height: 100vh; }
+.content-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.content-inner { flex: 1; max-width: 1180px; margin: 0 auto; padding: var(--content-pad); width: 100%; }
+
+main { display: flex; flex-direction: column; min-height: auto; }
+.sidebar { overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
 @media (max-width: 1080px) {
   .home-grid { grid-template-columns: 1fr !important; }
@@ -39,7 +47,55 @@ const appCss = `
 }
 `;
 
-export default function App() {
+const queryClient = new QueryClient();
+
+// Initialize CSS variables on load
+const initializeCSSVariables = (theme = "light", t = {}) => {
+  const r = document.documentElement.style;
+  const acc = theme === "dark" ? `color-mix(in srgb, ${t.accent || "#2F54EB"} 68%, white)` : (t.accent || "#2F54EB");
+  r.setProperty("--accent", acc);
+
+  // Apply landing page design system for light mode
+  if (theme === "light") {
+    r.setProperty("--bg", "#FAFAFB");
+    r.setProperty("--surface", "#FFFFFF");
+    r.setProperty("--surface-2", "#F5F6F8");
+    r.setProperty("--surface-3", "#EFF0F3");
+    r.setProperty("--border", "#ECEDF0");
+    r.setProperty("--border-strong", "#E1E2E7");
+    r.setProperty("--text", "#16171A");
+    r.setProperty("--text-muted", "#6B6F76");
+    r.setProperty("--text-faint", "#9CA1A9");
+
+    // Also set the landing page tokens for consistency
+    r.setProperty("--color-brand", "#2155f5");
+    r.setProperty("--color-ink", "#0f1013");
+    r.setProperty("--color-surface", "#f9f9fa");
+    r.setProperty("--color-border-soft", "#e1e2e9");
+    r.setProperty("--color-ink-muted", "#494c52");
+    r.setProperty("--color-surface-alt", "#eef1fb");
+  } else {
+    // Dark mode - use inverted landing page colors
+    r.setProperty("--bg", "#0A0B0E");
+    r.setProperty("--surface", "#121319");
+    r.setProperty("--surface-2", "#181A21");
+    r.setProperty("--surface-3", "#20232B");
+    r.setProperty("--border", "rgba(255,255,255,0.07)");
+    r.setProperty("--border-strong", "rgba(255,255,255,0.12)");
+    r.setProperty("--text", "#F2F3F5");
+    r.setProperty("--text-muted", "#9BA0A8");
+    r.setProperty("--text-faint", "#686D76");
+
+    r.setProperty("--color-brand", "#2155f5");
+    r.setProperty("--color-ink", "#f9f9fa");
+    r.setProperty("--color-surface", "#0f1013");
+    r.setProperty("--color-border-soft", "#494c52");
+    r.setProperty("--color-ink-muted", "#9CA1A9");
+    r.setProperty("--color-surface-alt", "#1a1f2e");
+  }
+};
+
+function AppContent() {
   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
     "accent": "#2F54EB",
     "density": "regular",
@@ -52,6 +108,11 @@ export default function App() {
   const [loggedOut, setLoggedOut] = React.useState(false);
   const scrollRef = React.useRef(null);
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  // Initialize variables on mount
+  React.useEffect(() => {
+    initializeCSSVariables(theme, t);
+  }, []);
 
   const handleLogout = () => {
     apiLogout();
@@ -68,18 +129,21 @@ export default function App() {
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("zedsms-theme", theme);
+    initializeCSSVariables(theme, t);
   }, [theme]);
 
   React.useEffect(() => {
     const r = document.documentElement.style;
-    const acc = theme === "dark" ? `color-mix(in srgb, ${t.accent} 68%, white)` : t.accent;
-    r.setProperty("--accent", acc);
     const d = DENSITY[t.density] || DENSITY.regular;
     r.setProperty("--sidebar-w", d.sw);
     r.setProperty("--content-pad", d.pad);
     const c = CORNERS[t.corners] || CORNERS.soft;
     r.setProperty("--r-card", c[0]);
     r.setProperty("--r-ctrl", c[1]);
+
+    // Update accent color
+    const acc = theme === "dark" ? `color-mix(in srgb, ${t.accent} 68%, white)` : t.accent;
+    r.setProperty("--accent", acc);
   }, [t.accent, t.density, t.corners, theme]);
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
@@ -150,11 +214,19 @@ export default function App() {
                 onChange={(v) => setTheme(v)} />
             </TweaksPanel>
           )}
-          <main ref={scrollRef} className="content-inner" key={route}>
+          <main ref={scrollRef} className="content-inner">
             {screen}
           </main>
         </div>
       </div>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
+    </QueryClientProvider>
   );
 }

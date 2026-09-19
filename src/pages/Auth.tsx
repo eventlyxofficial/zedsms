@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 // Demo credentials
 const DEMO = {
@@ -52,8 +54,10 @@ function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f9fa] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[420px]">
+    <div className="min-h-screen bg-[#f9f9fa] flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-[420px]">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -187,13 +191,15 @@ function SignInPage() {
           By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
         </p>
 
-        {/* Demo Info */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-[11px] text-xs text-[#2155f5]">
-          <p className="font-semibold mb-2">Demo Credentials:</p>
-          <p>Email: alex.mercer@gmail.com</p>
-          <p>Password: Password1</p>
+          {/* Demo Info */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-[11px] text-xs text-[#2155f5]">
+            <p className="font-semibold mb-2">Demo Credentials:</p>
+            <p>Email: alex.mercer@gmail.com</p>
+            <p>Password: Password1</p>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -231,8 +237,10 @@ function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f9fa] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[420px]">
+    <div className="min-h-screen bg-[#f9f9fa] flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-[420px]">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -383,11 +391,13 @@ function SignUpPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <p className="text-center text-xs text-[#9CA1A9] mt-6">
-          By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
-        </p>
+          {/* Footer */}
+          <p className="text-center text-xs text-[#9CA1A9] mt-6">
+            By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
+          </p>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }
