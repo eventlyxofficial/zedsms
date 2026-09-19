@@ -41,14 +41,14 @@ function SignInPage() {
 
     // Demo validation
     if (email.toLowerCase() === DEMO.existingEmail && password === DEMO.validPassword) {
-      // Proceed to 2FA or success
       setBanner(null);
-      navigate("/app/home");
+      setTimeout(() => navigate("/app/home"), 300);
       return;
     }
 
     setAttempts((a) => a + 1);
-    setBanner({ type: "error", message: `Incorrect credentials. ${3 - attempts} attempts left.` });
+    const remainingAttempts = 3 - attempts - 1;
+    setBanner({ type: "error", message: remainingAttempts > 0 ? `Incorrect credentials. ${remainingAttempts} attempts left.` : "Too many failed attempts. Try again later." });
   };
 
   return (
@@ -111,7 +111,7 @@ function SignInPage() {
             <button
               type="submit"
               disabled={locked}
-              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] disabled:opacity-50 text-white font-display font-medium py-3 rounded-full transition-colors mt-6"
+              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] disabled:opacity-50 text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer"
             >
               Sign in
             </button>
@@ -252,7 +252,7 @@ function SignUpPage() {
 
             <button
               type="submit"
-              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] text-white font-display font-medium py-3 rounded-full transition-colors mt-6"
+              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer"
             >
               Create account
             </button>
