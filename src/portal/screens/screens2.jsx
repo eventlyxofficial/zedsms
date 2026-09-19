@@ -358,12 +358,13 @@ const BuyScreen = ({ setRoute, openNumber }) => {
 
       {/* processing overlay → then redirect to My Numbers. Portaled to <body> so it sits outside .layout and stays sharp while the page blurs behind it. */}
       {processing && createPortal(
-        <div style={{ position: "fixed", inset: 0, zIndex: 250, background: "rgba(8,9,12,0.32)", display: "flex", alignItems: "center", justifyContent: "center", animation: "fadeIn 0.18s ease" }}>
-          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, boxShadow: "var(--shadow-pop)", padding: "34px 44px", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, minWidth: 300, animation: "popIn 0.2s ease" }}>
-            <span style={{ width: 40, height: 40, borderRadius: "50%", border: "3px solid var(--surface-3)", borderTopColor: "var(--accent)", animation: "spin 0.7s linear infinite" }} />
+        <div style={{ position: "fixed", inset: 0, zIndex: 250, background: "rgba(8,9,12,0.48)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", animation: "fadeIn 0.2s ease" }}>
+          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, boxShadow: "var(--shadow-pop)", padding: "40px 50px", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, minWidth: 320, animation: "slideUp 0.3s cubic-bezier(0.22,1,0.36,1)" }}>
+            <div className="spinner" style={{ width: 48, height: 48 }} />
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 15.5, fontWeight: 600 }}>Processing your purchase…</div>
-              <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 5 }}>Assigning your {isPrivate ? country.name : svc.name} number</div>
+              <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Processing your purchase…</div>
+              <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>Assigning your {isPrivate ? country.name : svc.name} number</div>
+              <div style={{ fontSize: 12, color: "var(--text-faint)", marginTop: 12 }}>This may take a moment…</div>
             </div>
           </div>
         </div>,

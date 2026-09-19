@@ -11,12 +11,12 @@ const NavItem = ({ item, route, setRoute, setMobileOpen }) => {
     <button onClick={() => { setRoute(item.id); setMobileOpen(false); }}
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{ display: "flex", alignItems: "center", gap: 11, width: "100%", height: 40, padding: "0 11px", borderRadius: 10,
-        background: active ? "var(--accent-soft)" : hover ? "var(--surface-2)" : "transparent",
-        color: active ? "var(--accent)" : "var(--text-muted)", fontWeight: active ? 550 : 450, fontSize: 13.5,
-        transition: "all 0.14s ease", position: "relative", letterSpacing: "-0.005em" }}>
-      <Icon name={item.icon} size={18} strokeWidth={active ? 1.9 : 1.7} />
+        background: active ? "#2155f5" : hover ? "var(--surface-2)" : "transparent",
+        color: active ? "#ffffff" : "var(--text-muted)", fontWeight: active ? 600 : 450, fontSize: 13.5,
+        transition: "all 0.14s ease", position: "relative", letterSpacing: "-0.005em", border: active ? "2px solid #2155f5" : "none" }}>
+      <Icon name={item.icon} size={18} strokeWidth={active ? 2 : 1.7} />
       <span style={{ whiteSpace: "nowrap" }}>{item.label}</span>
-      {item.id === "buy" && <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 600, color: "var(--accent)", background: active ? "var(--surface)" : "var(--accent-soft)", padding: "2px 6px", borderRadius: 6 }}>⌘B</span>}
+      {item.id === "buy" && <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 600, color: active ? "#ffffff" : "var(--accent)", background: active ? "rgba(255,255,255,0.2)" : "var(--accent-soft)", padding: "2px 6px", borderRadius: 6 }}>⌘B</span>}
     </button>
   );
 };

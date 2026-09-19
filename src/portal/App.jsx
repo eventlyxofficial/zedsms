@@ -24,6 +24,34 @@ main { display: flex; flex-direction: column; min-height: auto; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
 .sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
+/* Loading animations */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.button-loading {
+  pointer-events: none;
+  opacity: 0.6;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 @media (max-width: 1080px) {
   .home-grid { grid-template-columns: 1fr !important; }
   .numbers-layout { grid-template-columns: 1fr !important; }
@@ -66,6 +94,12 @@ const initializeCSSVariables = (theme = "light", t = {}) => {
     r.setProperty("--text", "#16171A");
     r.setProperty("--text-muted", "#6B6F76");
     r.setProperty("--text-faint", "#9CA1A9");
+    r.setProperty("--accent-soft", "color-mix(in srgb, #2155f5 8%, #FFFFFF)");
+    r.setProperty("--accent-border", "color-mix(in srgb, #2155f5 22%, #FFFFFF)");
+    r.setProperty("--success", "#1B8A5A");
+    r.setProperty("--success-soft", "#E9F6EF");
+    r.setProperty("--danger", "#D6453A");
+    r.setProperty("--danger-soft", "#FCEDEC");
 
     // Also set the landing page tokens for consistency
     r.setProperty("--color-brand", "#2155f5");
@@ -85,6 +119,12 @@ const initializeCSSVariables = (theme = "light", t = {}) => {
     r.setProperty("--text", "#F2F3F5");
     r.setProperty("--text-muted", "#9BA0A8");
     r.setProperty("--text-faint", "#686D76");
+    r.setProperty("--accent-soft", "color-mix(in srgb, #6A8BFF 15%, #121319)");
+    r.setProperty("--accent-border", "color-mix(in srgb, #6A8BFF 30%, #121319)");
+    r.setProperty("--success", "#46C68B");
+    r.setProperty("--success-soft", "rgba(70,198,139,0.12)");
+    r.setProperty("--danger", "#F0726A");
+    r.setProperty("--danger-soft", "rgba(240,114,106,0.12)");
 
     r.setProperty("--color-brand", "#2155f5");
     r.setProperty("--color-ink", "#f9f9fa");
