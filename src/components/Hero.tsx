@@ -80,7 +80,7 @@ export default function Hero() {
 
           <div style={{ "--i": 3 } as CSSProperties} className="hero-in flex flex-col gap-5 items-center lg:items-start">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <a href="#">
+              <a href="https://apps.apple.com/gb/app/zedsms-second-phone-number/id6763044238" target="_blank" rel="noopener noreferrer">
                 <img src={imgAppStore} alt="Download on the App Store" className="h-12 w-[163px]" />
               </a>
               <a

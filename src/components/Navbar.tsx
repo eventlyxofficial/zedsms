@@ -41,7 +41,7 @@ export default function Navbar() {
             <a href="#" className="lift hidden sm:inline-flex border border-[#e1e2e9] rounded-full px-[22px] py-3 font-display font-medium text-sm text-[#090a0b]">
               Sign in
             </a>
-            <a href="#" className="lift bg-[#2155f5] hover:bg-[#1a46d1] rounded-full px-4 sm:px-[22px] py-2.5 sm:py-3 font-display font-medium text-sm text-white whitespace-nowrap">
+            <a href="/app" className="lift bg-[#2155f5] hover:bg-[#1a46d1] rounded-full px-4 sm:px-[22px] py-2.5 sm:py-3 font-display font-medium text-sm text-white whitespace-nowrap">
               Get started
             </a>
             <button
