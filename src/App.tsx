@@ -5,6 +5,7 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Portal from "./pages/Portal";
+import { SignInPage, SignUpPage } from "./pages/Auth";
 
 // Start each page at the top instead of keeping the previous scroll position
 function ScrollToTop() {
@@ -24,6 +25,8 @@ export default function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/about" element={<About />} />
+        <Route path="/auth/signin" element={<SignInPage />} />
+        <Route path="/auth/signup" element={<SignUpPage />} />
         <Route path="/app/*" element={<Portal />} />
       </Routes>
     </BrowserRouter>
