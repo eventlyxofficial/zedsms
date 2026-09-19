@@ -1,8 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { buyNumber, getNumbers, releaseNumber, renameNumber, renewNumber } from "../api/numbers";
+import { buyNumber, getNumbers, releaseNumber, renameNumber, renewNumber, transferNumber, updateAutoRenew, sendSmsFromNumber } from "../api/numbers";
 
 export function useNumbers() {
-  return useQuery({ queryKey: ["numbers"], queryFn: getNumbers });
+  return useQuery({
+    queryKey: ["numbers"],
+    queryFn: getNumbers,
+    select: (data) => {
+      // Ensure data is always an array
+      if (Array.isArray(data)) return data;
+      if (data?.data && Array.isArray(data.data)) return data.data;
+      if (data?.numbers && Array.isArray(data.numbers)) return data.numbers;
+      return [];
+    }
+  });
 }
 
 export function useBuyNumber() {
@@ -34,5 +44,32 @@ export function useRenameNumber() {
   return useMutation({
     mutationFn: ({ numberId, label }) => renameNumber(numberId, label),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["numbers"] }),
+  });
+}
+
+export function useTransferNumber() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ numberId, toZedId }) => transferNumber(numberId, toZedId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["numbers"] }),
+  });
+}
+
+export function useUpdateAutoRenew() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ numberId, enabled }) => updateAutoRenew(numberId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["numbers"] }),
+  });
+}
+
+export function useSendSmsFromNumber() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ numberId, to, body }) => sendSmsFromNumber(numberId, { to, body }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["messages"] });
+      qc.invalidateQueries({ queryKey: ["sent"] });
+    },
   });
 }

@@ -2,12 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
-// Demo credentials
-const DEMO = {
-  existingEmail: "alex.mercer@gmail.com",
-  validPassword: "Password1",
-};
+import { useAuth } from "../portal/hooks/useAuth";
 
 const emailValid = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const pwChecks = (p: string) => ({
@@ -21,17 +16,17 @@ const pwStrongEnough = (p: string) => Object.values(pwChecks(p)).every(Boolean);
 // ============ SIGN IN PAGE ============
 function SignInPage() {
   const navigate = useNavigate();
+  const { login, isLoginLoading, loginError } = useAuth();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-  const [banner, setBanner] = React.useState<string | null>(null);
   const [attempts, setAttempts] = React.useState(0);
   const locked = attempts >= 3;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (locked) return;
+    if (locked || isLoginLoading) return;
 
     const newErrors: Record<string, string> = {};
     if (!email) newErrors.email = "Email is required";
@@ -41,16 +36,31 @@ function SignInPage() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
 
-    // Demo validation
-    if (email.toLowerCase() === DEMO.existingEmail && password === DEMO.validPassword) {
-      setBanner(null);
-      setTimeout(() => navigate("/app/home"), 300);
-      return;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        login(
+          { login: email, password },
+          {
+            onSuccess: () => {
+              setTimeout(() => navigate("/app/home"), 300);
+              resolve();
+            },
+            onError: (error: any) => {
+              setAttempts((a) => a + 1);
+              const remaining = 3 - attempts - 1;
+              if (remaining > 0) {
+                setErrors({ submit: `Incorrect email or password. ${remaining} attempt${remaining === 1 ? "" : "s"} left.` });
+              } else {
+                setErrors({ submit: "Too many attempts. Try again later." });
+              }
+              reject(error);
+            },
+          }
+        );
+      });
+    } catch (err) {
+      // Error handled in onError callback
     }
-
-    setAttempts((a) => a + 1);
-    const remaining = 3 - attempts - 1;
-    setBanner(remaining > 0 ? `Incorrect email or password. ${remaining} attempt${remaining === 1 ? "" : "s"} left.` : "Too many attempts. Try again later.");
   };
 
   return (
@@ -91,10 +101,10 @@ function SignInPage() {
               <div>Too many failed attempts. Try again in 30 seconds.</div>
             </div>
           )}
-          {!locked && banner && (
+          {!locked && errors.submit && (
             <div className="mb-4 p-4 rounded-lg bg-red-50 text-red-700 text-sm flex gap-3">
               <span className="text-lg">⚠️</span>
-              <div>{banner}</div>
+              <div>{errors.submit}</div>
             </div>
           )}
 
@@ -146,10 +156,20 @@ function SignInPage() {
 
             <button
               type="submit"
-              disabled={locked}
-              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] disabled:opacity-50 text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer"
+              disabled={locked || isLoginLoading}
+              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] disabled:opacity-50 text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer flex items-center justify-center gap-2"
             >
-              Sign in
+              {isLoginLoading ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 
@@ -190,13 +210,6 @@ function SignInPage() {
         <p className="text-center text-xs text-[#9CA1A9] mt-6">
           By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
         </p>
-
-          {/* Demo Info */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-[11px] text-xs text-[#2155f5]">
-            <p className="font-semibold mb-2">Demo Credentials:</p>
-            <p>Email: alex.mercer@gmail.com</p>
-            <p>Password: Password1</p>
-          </div>
         </div>
       </div>
       <Footer />
@@ -207,6 +220,7 @@ function SignInPage() {
 // ============ SIGN UP PAGE ============
 function SignUpPage() {
   const navigate = useNavigate();
+  const { signup, isSignupLoading, signupError } = useAuth();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
@@ -215,13 +229,14 @@ function SignUpPage() {
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const checks = pwChecks(password);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSignupLoading) return;
+
     const newErrors: Record<string, string> = {};
 
     if (!email) newErrors.email = "Email is required";
     else if (!emailValid(email)) newErrors.email = "Enter a valid email";
-    else if (email.toLowerCase() === DEMO.existingEmail) newErrors.email = "An account with this email already exists";
 
     if (!password) newErrors.password = "Password is required";
     else if (!pwStrongEnough(password)) newErrors.password = "Password doesn't meet the requirements below";
@@ -233,7 +248,25 @@ function SignUpPage() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
 
-    setTimeout(() => navigate("/app/home"), 300);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        signup(
+          { email, password, password_confirmation: confirm },
+          {
+            onSuccess: () => {
+              setTimeout(() => navigate("/app/home"), 300);
+              resolve();
+            },
+            onError: (error: any) => {
+              setErrors({ submit: error.response?.data?.message || "Signup failed. Please try again." });
+              reject(error);
+            },
+          }
+        );
+      });
+    } catch (err) {
+      // Error handled in onError callback
+    }
   };
 
   return (
@@ -267,6 +300,13 @@ function SignUpPage() {
 
           <h1 className="font-display font-semibold text-2xl text-[#0f1013] mb-1">Create your account</h1>
           <p className="text-[#6B6F76] text-sm mb-6">Get a number in minutes. No name or username needed.</p>
+
+          {errors.submit && (
+            <div className="mb-4 p-4 rounded-lg bg-red-50 text-red-700 text-sm flex gap-3">
+              <span className="text-lg">⚠️</span>
+              <div>{errors.submit}</div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
@@ -352,9 +392,20 @@ function SignUpPage() {
 
             <button
               type="submit"
-              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer"
+              disabled={isSignupLoading}
+              className="w-full bg-[#2155f5] hover:bg-[#1a46d1] disabled:opacity-50 text-white font-display font-medium py-3 rounded-full transition-colors mt-6 cursor-pointer flex items-center justify-center gap-2"
             >
-              Create account
+              {isSignupLoading ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Creating account...
+                </>
+              ) : (
+                "Create account"
+              )}
             </button>
           </form>
 
@@ -391,10 +442,10 @@ function SignUpPage() {
           </div>
         </div>
 
-          {/* Footer */}
-          <p className="text-center text-xs text-[#9CA1A9] mt-6">
-            By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
-          </p>
+        {/* Footer */}
+        <p className="text-center text-xs text-[#9CA1A9] mt-6">
+          By continuing you agree to ZEDSMS's Terms of Service and Privacy Policy.
+        </p>
         </div>
       </div>
       <Footer />

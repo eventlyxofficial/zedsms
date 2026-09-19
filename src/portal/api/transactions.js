@@ -1,20 +1,46 @@
 import { api } from "./client";
-import { TRANSACTIONS } from "../mocks/seed";
 
-const MOCK_DELAY = 250;
-const delay = (v) => new Promise((res) => setTimeout(() => res(v), MOCK_DELAY));
-
-export function getTransactions() {
-  // return api.get("/transactions");
-  return delay(TRANSACTIONS);
+// Get user's transaction history
+export async function getTransactions() {
+  try {
+    const response = await api.get("/user/my-transactions");
+    // API returns paginated response
+    if (response?.data?.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    }
+    if (Array.isArray(response)) return response;
+    if (response?.data && Array.isArray(response.data)) return response.data;
+    return [];
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return [];
+  }
 }
 
-export function topUp({ amount, method }) {
-  // return api.post("/transactions/topup", { amount, method });
-  return delay({ date: new Date().toISOString().slice(0, 10), action: "Top up", amount, desc: method, status: 1 });
+// Top up account balance
+export async function topUp({ amount, method }) {
+  return api.post("/user/topup", { amount, method });
 }
 
-export function transferBalance({ amount, toZedId }) {
-  // return api.post("/transactions/transfer", { amount, toZedId });
-  return delay({ date: new Date().toISOString().slice(0, 10), action: "Balance transfer", amount: -amount, desc: `To ${toZedId}`, status: 1 });
+// Transfer balance to another user
+export async function transferBalance({ amount, toZedId }) {
+  return api.post("/user/transfer-balance", { amount, to_zedsms_id: toZedId });
+}
+
+// Get payment methods
+export async function getPaymentMethods() {
+  try {
+    return api.get("/user/payment-methods");
+  } catch (err) {
+    throw new Error("Failed to get payment methods");
+  }
+}
+
+// Initiate payment
+export async function initiatePayment({ amount, method }) {
+  try {
+    return api.post("/user/payment/initiate", { amount, payment_method: method });
+  } catch (err) {
+    throw new Error("Payment initiation failed");
+  }
 }

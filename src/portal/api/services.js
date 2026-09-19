@@ -1,10 +1,28 @@
 import { api } from "./client";
-import { SERVICES } from "../mocks/seed";
 
-const MOCK_DELAY = 250;
-const delay = (v) => new Promise((res) => setTimeout(() => res(v), MOCK_DELAY));
+// Get available services (SMS providers)
+export async function getServices() {
+  try {
+    return api.get("/mobile-number-providers");
+  } catch (err) {
+    throw new Error("Failed to get services");
+  }
+}
 
-export function getServices() {
-  // return api.get("/services");
-  return delay(SERVICES);
+// Get specific service details
+export async function getServiceDetails(serviceId) {
+  try {
+    return api.get(`/mobile-number-providers/${serviceId}`);
+  } catch (err) {
+    throw new Error("Failed to get service details");
+  }
+}
+
+// Get service pricing
+export async function getServicePricing(serviceId) {
+  try {
+    return api.get(`/services/${serviceId}/pricing`);
+  } catch (err) {
+    throw new Error("Failed to get service pricing");
+  }
 }

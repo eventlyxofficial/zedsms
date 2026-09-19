@@ -23,10 +23,20 @@ const NavItem = ({ item, route, setRoute, setMobileOpen }) => {
 
 export const Sidebar = ({ route, setRoute, mobileOpen, setMobileOpen, onLogout }) => {
   const { data: user } = useUser();
-  const balance = user?.balance ?? 0;
+  const balance = typeof user?.balance === 'number' ? user.balance : 0;
   const email = user?.email ?? "";
   const zedId = user?.zedId ?? "";
   const userInitial = (email[0] || "?").toUpperCase();
+  const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
+
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
+    onLogout();
+  };
 
   return (
     <>
@@ -89,11 +99,34 @@ export const Sidebar = ({ route, setRoute, mobileOpen, setMobileOpen, onLogout }
                 <div className="mono" style={{ fontSize: 11.5, color: "var(--text-faint)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>ID {zedId}</div>
               </div>
             </button>
-            <button onClick={onLogout} title="Log out" style={{ width: 32, height: 32, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-faint)", flexShrink: 0 }}
+            <button onClick={handleLogoutClick} title="Log out" style={{ width: 32, height: 32, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-faint)", flexShrink: 0 }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "var(--danger-soft)"; e.currentTarget.style.color = "var(--danger)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-faint)"; }}>
               <Icon name="logout" size={16} />
             </button>
+
+            {/* Logout Confirmation Modal */}
+            {showLogoutConfirm && (
+              <>
+                <div onClick={() => setShowLogoutConfirm(false)} style={{ position: "fixed", inset: 0, background: "rgba(8,9,12,0.4)", zIndex: 999, backdropFilter: "blur(2px)" }} />
+                <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--surface)", borderRadius: 16, border: "1px solid var(--border)", boxShadow: "var(--shadow-pop)", zIndex: 1000, maxWidth: 400, width: "90vw", overflow: "hidden" }}>
+                  <div style={{ padding: 24 }}>
+                    <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Sign out?</div>
+                    <p style={{ fontSize: 13.5, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.5 }}>
+                      Are you sure you want to sign out? You'll need to sign in again to access your account.
+                    </p>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <button onClick={() => setShowLogoutConfirm(false)} style={{ flex: 1, height: 40, borderRadius: 10, border: "1px solid var(--border)", background: "var(--surface)", fontSize: 13.5, fontWeight: 500, cursor: "pointer" }}>
+                        Cancel
+                      </button>
+                      <button onClick={confirmLogout} style={{ flex: 1, height: 40, borderRadius: 10, background: "var(--danger)", color: "#fff", border: "none", fontSize: 13.5, fontWeight: 600, cursor: "pointer" }}>
+                        Sign out
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </aside>

@@ -135,7 +135,7 @@ const initializeCSSVariables = (theme = "light", t = {}) => {
   }
 };
 
-function AppContent() {
+function AppContent({ onLogoutRedirect }) {
   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
     "accent": "#2F54EB",
     "density": "regular",
@@ -145,7 +145,6 @@ function AppContent() {
   const [theme, setTheme] = React.useState(() => localStorage.getItem("zedsms-theme") || "light");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [pendingNumber, setPendingNumber] = React.useState(null);
-  const [loggedOut, setLoggedOut] = React.useState(false);
   const scrollRef = React.useRef(null);
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -156,7 +155,8 @@ function AppContent() {
 
   const handleLogout = () => {
     apiLogout();
-    setLoggedOut(true);
+    // Redirect directly to signin page
+    window.location.href = "/auth/signin";
   };
 
   const DENSITY = {
@@ -209,25 +209,6 @@ function AppContent() {
   else if (route === "transactions") screen = <TransactionsScreen />;
   else if (route === "settings") screen = <SettingsScreen theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />;
 
-  if (loggedOut) {
-    return (
-      <>
-        <style>{appCss}</style>
-        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, padding: 24 }}>
-          <LogoMark size={38} />
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 17, fontWeight: 600, marginBottom: 4 }}>You've been logged out</div>
-            <div style={{ fontSize: 13.5, color: "var(--text-muted)" }}>Sign back in to access your ZEDSMS account.</div>
-          </div>
-          <button onClick={() => setLoggedOut(false)}
-            style={{ height: 42, padding: "0 22px", borderRadius: 11, background: "var(--accent)", color: "#fff", fontSize: 13.5, fontWeight: 550, display: "inline-flex", alignItems: "center", gap: 8 }}>
-            <Icon name="logout" size={16} style={{ transform: "scaleX(-1)" }} /> Log back in
-          </button>
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <style>{appCss}</style>
@@ -263,10 +244,10 @@ function AppContent() {
   );
 }
 
-export default function App() {
+export default function App(props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
+      <AppContent {...props} />
     </QueryClientProvider>
   );
 }

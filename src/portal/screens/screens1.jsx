@@ -8,10 +8,10 @@ import { CodeChip } from "../components/ui/CodeChip";
 import { Empty } from "../components/ui/Empty";
 import { Modal } from "../components/ui/Modal";
 import { Toast } from "../components/ui/Toast";
-import { COUNTRIES, MESSAGES, NUMBERS, SENT, SERVICES } from "../mocks/seed";
+import { COUNTRIES, SERVICES } from "../mocks/seed";
 import { countryRentOf, svcPriceOf, weeklyPriceOf } from "../lib/pricing";
-import { useNumbers } from "../hooks/useNumbers";
-import { useMessages } from "../hooks/useMessages";
+import { useNumbers, useRenewNumber, useTransferNumber, useRenameNumber, useReleaseNumber, useUpdateAutoRenew, useSendSmsFromNumber } from "../hooks/useNumbers";
+import { useMessages, useRecentMessages } from "../hooks/useMessages";
 import { useUser } from "../hooks/useUser";
 
 // ============ HOME / OVERVIEW ============
@@ -138,7 +138,7 @@ const HomeScreen = ({ setRoute, openNumber }) => {
   // Live data via React Query — this screen is the wired-up template; other
   // screens still read mocks/seed.js directly pending the same treatment.
   const { data: numbers = [], isLoading: numbersLoading } = useNumbers();
-  const { data: messages = [], isLoading: messagesLoading } = useMessages();
+  const { data: messages = [], isLoading: messagesLoading } = useRecentMessages();
   const { data: user } = useUser();
 
   const active = numbers.filter((n) => n.status === "active");
@@ -177,19 +177,19 @@ const HomeScreen = ({ setRoute, openNumber }) => {
 
       {/* stats */}
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-        <StatCard label="Balance" value={`$${user.balance.toFixed(2)}`} sub="Across all wallets" icon="wallet" tone="var(--accent)" />
+        <StatCard label="Balance" value={`$${(typeof user?.balance === 'number' ? user.balance : 0).toFixed(2)}`} sub="Across all wallets" icon="wallet" tone="var(--accent)" />
         <StatCard label="Active numbers" value={active.length} sub={`${expiring.length} expiring soon`} icon="grid" tone="var(--success)" />
-        <StatCard label="Codes today" value={messages.filter((m) => /min|hr/.test(m.time)).length} sub={`${unreadCodes} unread`} icon="shield" tone="var(--accent)" />
+        <StatCard label="Recent messages" value={messages.filter((m) => /min|hr/.test(m.time)).length} sub={`${unreadCodes} unread`} icon="msg" tone="var(--accent)" />
         <StatCard label="Spent this week" value="$3.95" sub="6 purchases" icon="receipt" tone="var(--text-faint)" />
       </div>
 
       {/* main grid */}
       <div className="home-grid" style={{ display: "grid", gridTemplateColumns: "1.55fr 1fr", gap: 18, alignItems: "start" }}>
-        {/* latest codes */}
+        {/* latest messages */}
         <Card style={{ overflow: "hidden" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px 12px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em" }}>Latest codes</h3>
+              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em" }}>Latest Messages</h3>
               {unreadCodes > 0 && <Badge tone="accent">{unreadCodes} new</Badge>}
             </div>
             <button onClick={() => setRoute("numbers")} style={{ fontSize: 12.5, fontWeight: 500, color: "var(--accent)", display: "flex", alignItems: "center", gap: 3 }}>View all <Icon name="chevR" size={14} /></button>
@@ -209,17 +209,25 @@ const HomeScreen = ({ setRoute, openNumber }) => {
               <button onClick={() => setRoute("numbers")} style={{ fontSize: 12.5, fontWeight: 500, color: "var(--accent)" }}>Manage</button>
             </div>
             <div style={{ padding: "0 10px 12px" }}>
-              {active.slice(0, 3).map((n) => (
-                <button key={n.id} onClick={() => openNumber(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "10px 10px", borderRadius: 11, textAlign: "left" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "var(--surface-2)"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
-                  <FlagAvatar iso={n.iso} size={36} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="mono tnum" style={{ fontSize: 13.5, fontWeight: 500 }}>{n.number}</div>
-                    <div style={{ fontSize: 11.5, color: "var(--text-faint)" }}>{n.service ? n.service + " · " : ""}{n.type}</div>
-                  </div>
-                  <Badge tone={n.days <= 7 ? "warning" : "neutral"} className="tnum">{n.days}d left</Badge>
-                </button>
-              ))}
+              {active.slice(0, 3).map((n) => {
+                const countryIso = n.country?.iso || n.iso || "GB";
+                const phoneNumber = n.mobile_number || n.phone_number || n.number;
+                const serviceName = n.service_provider?.name || n.service || "SMS";
+                const numberType = n.mobile_number_type?.name || n.type || "Shared";
+                const daysLeft = n.rent_time?.days || n.days || 7;
+
+                return (
+                  <button key={n.id} onClick={() => openNumber(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "10px 10px", borderRadius: 11, textAlign: "left" }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "var(--surface-2)"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                    <FlagAvatar iso={countryIso} size={36} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="mono tnum" style={{ fontSize: 13.5, fontWeight: 500 }}>{phoneNumber}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--text-faint)" }}>{serviceName} · {numberType}</div>
+                    </div>
+                    <Badge tone={daysLeft <= 7 ? "warning" : "neutral"} className="tnum">{daysLeft}d left</Badge>
+                  </button>
+                );
+              })}
             </div>
           </Card>
         </div>
@@ -359,44 +367,179 @@ function ComposeModal({ number, open, onClose, onSend }) {
 const NumbersScreen = ({ initialNumberId, clearInitial }) => {
   const [filter, setFilter] = React.useState("active");
   const [typeFilter, setTypeFilter] = React.useState("all"); // 'all' | 'Private' | 'Shared'
-  const [numbers, setNumbers] = React.useState(() => NUMBERS.map((n) => ({ ...n, autoRenew: false, label: "" })));
-  const [selected, setSelected] = React.useState(initialNumberId || NUMBERS[0].id);
+  const { data: apiNumbers = [] } = useNumbers();
+  const [selected, setSelected] = React.useState(initialNumberId);
   const [query, setQuery] = React.useState("");
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [modal, setModal] = React.useState(null); // 'renew' | 'transfer' | 'rename' | 'release' | 'compose'
   const [msgTab, setMsgTab] = React.useState("inbox"); // 'inbox' | 'sent'
   const [msgQuery, setMsgQuery] = React.useState("");
-  const [sent, setSent] = React.useState(() => SENT.slice());
   const [toast, setToast] = React.useState(null);
   const toastTimer = React.useRef(null);
   const showToast = (msg, tone = "success") => { clearTimeout(toastTimer.current); setToast({ msg, tone }); toastTimer.current = setTimeout(() => setToast(null), 2600); };
 
-  React.useEffect(() => { if (initialNumberId) { setSelected(initialNumberId); clearInitial && clearInitial(); } }, [initialNumberId]);
+  // Calculate days remaining from expiry timestamp
+  const getDaysRemaining = (expiryDate) => {
+    if (!expiryDate) return 0;
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const diffMs = expiry - today;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
+  // Get recent messages to calculate unread counts per number
+  const { data: recentMessages = [] } = useRecentMessages();
+
+  // Normalize API numbers to component format
+  const numbers = React.useMemo(() => {
+    console.log("Normalizing numbers, sample raw data:", apiNumbers[0]);
+    return apiNumbers.map((n) => {
+      const expiryTs = n.expires_at || n.expiry;
+      const daysLeft = getDaysRemaining(expiryTs);
+      // Use total_sms_count from API (new endpoint has this built-in)
+      const messageCount = n.total_sms_count || 0;
+
+      const normalized = {
+        id: n.id,
+        iso: n.iso || "GB",
+        number: n.number || "",
+        service: n.service_name || (n.type === "private" ? "Private" : "SMS"),
+        type: n.type === "private" ? "Private" : "Shared",
+        country: n.country || "Unknown",
+        days: daysLeft,
+        status: n.status || (daysLeft > 0 ? "active" : "expired"),
+        label: n.label && n.label.trim() !== "" ? n.label : null,
+        autoRenew: n.auto_renew === true || n.auto_renew === 1 || false,
+        unread: messageCount
+      };
+
+      if (n.label) console.log("Number with label:", n.id, n.label, "→", normalized.label);
+      return normalized;
+    });
+  }, [apiNumbers]);
+
+  // Set initial selection once
+  React.useEffect(() => {
+    if (!selected && numbers.length > 0) {
+      setSelected(initialNumberId || numbers[0].id);
+    }
+  }, [numbers, selected, initialNumberId]);
 
   const list = numbers
     .filter((n) => (filter === "all" ? true : n.status === filter))
     .filter((n) => (typeFilter === "all" ? true : n.type === typeFilter))
     .filter((n) => n.number.includes(query) || n.country.toLowerCase().includes(query.toLowerCase()) || (n.service || "").toLowerCase().includes(query.toLowerCase()) || (n.label || "").toLowerCase().includes(query.toLowerCase()));
-  const current = numbers.find((n) => n.id === selected) || list[0] || numbers[0];
-  const thread = MESSAGES.filter((m) => m.numberId === (current ? current.id : selected));
-  const sentThread = sent.filter((m) => m.numberId === (current ? current.id : selected));
+  const current = numbers.find((n) => n.id === selected) || list[0];
+
+  // Get messages for current number
+  const { data: rawMessages = [] } = useMessages(current?.id);
+
+  // Normalize messages from API
+  const thread = React.useMemo(() =>
+    rawMessages.map((m) => ({
+      id: m.id,
+      numberId: current?.id,
+      from: m.from_number || m.from || "Unknown",
+      body: m.message_body || m.body || "",
+      time: m.created_at ? new Date(m.created_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "now",
+      code: m.otp_code || m.code || "",
+      unread: !m.is_read,
+      color: m.color,
+      letter: (m.from_number || m.from || "U")[0].toUpperCase()
+    })),
+    [rawMessages, current?.id]
+  );
+
+  const sentThread = []; // API doesn't provide sent messages yet
   const isPrivate = !!current && current.type === "Private";
   // reset the message view whenever the selected number changes
   React.useEffect(() => { setMsgTab("inbox"); setMsgQuery(""); }, [selected]);
 
+  // Initialize mutations
+  const renewMutation = useRenewNumber();
+  const transferMutation = useTransferNumber();
+  const renameMutation = useRenameNumber();
+  const releaseMutation = useReleaseNumber();
+  const autoRenewMutation = useUpdateAutoRenew();
+  const sendSmsMutation = useSendSmsFromNumber();
+
   // ---- actions ----
-  const upd = (id, patch) => setNumbers((ns) => ns.map((n) => (n.id === id ? { ...n, ...patch } : n)));
-  const removeNum = (id) => setNumbers((ns) => {
-    const next = ns.filter((n) => n.id !== id);
-    if (id === selected) setSelected(next[0] ? next[0].id : null);
-    return next;
-  });
-  const doRenew = (days) => { upd(current.id, { days: (current.status === "expired" ? 0 : current.days) + days, status: "active" }); setModal(null); showToast(`${current.label || current.number} renewed · +${days}d`); };
-  const doTransfer = (to) => { const lbl = current.number; removeNum(current.id); setModal(null); showToast(`${lbl} transferred to ${to}`, "accent"); };
-  const doRename = (label) => { upd(current.id, { label }); setModal(null); showToast(label ? `Label saved` : `Label removed`); };
-  const doRelease = () => { const lbl = current.number; removeNum(current.id); setModal(null); showToast(`${lbl} released`, "danger"); };
-  const toggleAuto = () => { const next = !current.autoRenew; upd(current.id, { autoRenew: next }); setMenuOpen(false); showToast(next ? "Auto-renew turned on" : "Auto-renew turned off", next ? "success" : "danger"); };
-  const doSend = ({ to, body }) => { setSent((prev) => [{ id: Date.now(), numberId: current.id, to, body, time: "Just now", status: "delivered" }, ...prev]); setModal(null); setMsgTab("sent"); showToast(`Message sent to ${to}`); };
+  const doRenew = (days) => {
+    if (current) {
+      renewMutation.mutate({ numberId: current.id, plan: days }, {
+        onSuccess: () => {
+          setModal(null);
+          showToast(`${current.label || current.number} renewed · +${days}d`);
+        },
+        onError: () => showToast("Failed to renew number", "danger")
+      });
+    }
+  };
+
+  const doTransfer = (to) => {
+    if (current) {
+      const lbl = current.number;
+      transferMutation.mutate({ numberId: current.id, toZedId: to }, {
+        onSuccess: () => {
+          setModal(null);
+          showToast(`${lbl} transferred to ${to}`, "accent");
+        },
+        onError: (err) => showToast("Failed to transfer number", "danger")
+      });
+    }
+  };
+
+  const doRename = (label) => {
+    if (current) {
+      renameMutation.mutate({ numberId: current.id, label }, {
+        onSuccess: () => {
+          setModal(null);
+          showToast(label ? `Label saved` : `Label removed`);
+        },
+        onError: (err) => showToast("Failed to rename number", "danger")
+      });
+    }
+  };
+
+  const doRelease = () => {
+    if (current) {
+      const lbl = current.number;
+      releaseMutation.mutate(current.id, {
+        onSuccess: () => {
+          setModal(null);
+          showToast(`${lbl} released`, "danger");
+        },
+        onError: (err) => showToast("Failed to release number", "danger")
+      });
+    }
+  };
+
+  const toggleAuto = () => {
+    if (current) {
+      const next = !current.autoRenew;
+      autoRenewMutation.mutate({ numberId: current.id, enabled: next }, {
+        onSuccess: () => {
+          setMenuOpen(false);
+          showToast(next ? "Auto-renew turned on" : "Auto-renew turned off", next ? "success" : "danger");
+        },
+        onError: (err) => showToast("Failed to update auto-renew", "danger")
+      });
+    }
+  };
+
+  const doSend = ({ to, body }) => {
+    if (current) {
+      sendSmsMutation.mutate({ numberId: current.id, to, body }, {
+        onSuccess: () => {
+          setModal(null);
+          setMsgTab("inbox");
+          showToast(`Message sent to ${to}`);
+        },
+        onError: (err) => showToast("Failed to send SMS", "danger")
+      });
+    }
+  };
 
   const Tab = ({ id, label, count }) => (
     <button onClick={() => setFilter(id)} style={{ display: "flex", alignItems: "center", gap: 6, height: 30, padding: "0 12px", borderRadius: 8, fontSize: 12.5, fontWeight: 500,
@@ -467,10 +610,16 @@ const NumbersScreen = ({ initialNumberId, clearInitial }) => {
               <button key={n.id} onClick={() => setSelected(n.id)} style={{ display: "flex", alignItems: "center", gap: 11, width: "100%", padding: "11px 11px", borderRadius: 11, textAlign: "left", marginBottom: 2,
                 background: isSel ? "var(--accent-soft)" : "transparent", border: isSel ? "1px solid var(--accent-border)" : "1px solid transparent", transition: "background 0.12s" }}
                 onMouseEnter={(e) => { if (!isSel) e.currentTarget.style.background = "var(--surface-2)"; }} onMouseLeave={(e) => { if (!isSel) e.currentTarget.style.background = "transparent"; }}>
-                <FlagAvatar iso={n.iso} size={38} />
+                <FlagAvatar iso={n.iso || "GB"} size={38} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="mono tnum" style={{ fontSize: 13, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: n.status === "expired" ? 0.55 : 1 }}>{n.number}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--text-faint)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{n.label ? n.label + " · " : ""}{n.service || "Private"} · {n.country}</div>
+                  <div style={{ fontSize: 11.5, color: "var(--text-faint)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {n.label && <span style={{ color: "var(--text)", fontWeight: 500 }}>{n.label}</span>}
+                    {n.label && <span style={{ margin: "0 3px" }}>·</span>}
+                    <span>{n.service || "Private"}</span>
+                    <span style={{ margin: "0 3px" }}>·</span>
+                    <span>{n.country}</span>
+                  </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5, flexShrink: 0 }}>
                   {n.unread > 0 && (
@@ -492,7 +641,7 @@ const NumbersScreen = ({ initialNumberId, clearInitial }) => {
           <>
             <Card style={{ padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-                <FlagAvatar iso={current.iso} size={50} />
+                <FlagAvatar iso={current?.iso || "GB"} size={50} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                     <span className="mono tnum" style={{ fontSize: 19, fontWeight: 600, letterSpacing: "-0.01em" }}>{current.number}</span>
